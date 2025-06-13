@@ -1,0 +1,17 @@
+[project]
+name = "litellm-ollama-shim"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "litellm>=1.72.4",
+]
+
+[project.scripts]
+litellm-ollama-shim = "litellm_ollama_shim:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
