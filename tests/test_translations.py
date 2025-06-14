@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 
 import litellm_ollama_shim as shim
+from litellm_ollama_shim.types import ChatMessage, ChatRequest, TagsResponse, ModelInfo
 
 class DummyModel:
     def __init__(self, id, display_name=None, family=None, context_window=0):
@@ -30,26 +31,22 @@ def test_tags(monkeypatch):
     client = build_client(monkeypatch)
     resp = client.get("/api/tags")
     assert resp.status_code == 200
-    data = resp.json()
-    assert data["models"][0]["model"] == "foo"
-    assert data["models"][0]["name"] == "Foo Model"
+    data = TagsResponse.model_validate(resp.json())
+    assert data.models[0].model == "foo"
+    assert data.models[0].name == "Foo Model"
 
 def test_chat(monkeypatch):
     client = build_client(monkeypatch)
-    resp = client.post(
-        "/api/chat",
-        json={"model": "foo", "messages": [{"role": "user", "content": "?"}]},
-    )
+    req = ChatRequest(model="foo", messages=[ChatMessage(role="user", content="?")])
+    resp = client.post("/api/chat", json=req.model_dump())
     assert resp.status_code == 200
     assert resp.json()["message"]["content"] == "hi"
 
 
 def test_chat_stream(monkeypatch):
     client = build_client(monkeypatch)
-    resp = client.post(
-        "/api/chat",
-        json={"model": "foo", "messages": [{"role": "user", "content": "?"}], "stream": True},
-    )
+    req = ChatRequest(model="foo", messages=[ChatMessage(role="user", content="?" )], stream=True)
+    resp = client.post("/api/chat", json=req.model_dump())
     chunks = list(resp.iter_lines())
     assert any("data:" in c for c in chunks)
 
@@ -58,4 +55,5 @@ def test_show(monkeypatch):
     client = build_client(monkeypatch)
     resp = client.get("/api/show", params={"name": "foo"})
     assert resp.status_code == 200
-    assert resp.json()["model"] == "foo"
+    model = ModelInfo.model_validate(resp.json())
+    assert model.model == "foo"
