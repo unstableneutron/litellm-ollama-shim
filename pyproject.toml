@@ -22,3 +22,33 @@ dev = [
     "ruff>=0.11.13",
 ]
 
+
+[tool.ruff.lint]
+select = [
+  "E",        # full pycodestyle (superset of E4/E7/E9)
+  "F",        # Pyflakes
+
+  # Code-correctness & modernization
+  "B",        # flake8-bugbear  – probable bugs & foot-guns
+  "UP",       # pyupgrade       – auto-modernise to the minimum Python
+  "SIM",      # flake8-simplify – flag pointless constructs
+
+  # Hygiene & consistency
+  "I",        # isort           – deterministic import order
+  "RUF",      # Ruff-specific   – incl. RUF100 (unused noqa)
+
+  # Optional-but-useful extras
+  "ARG",      # flake8-unused-arguments – dead params
+  "S",        # flake8-bandit   – basic security checks
+  "N",        # pep8-naming     – function/class naming
+  "D",        # pydocstyle      – docstring conventions
+]
+
+# Treat line length as a formatter concern
+ignore = ["E501"]
+
+# Silence deliberate re-exports
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/*" = ["S101"]
+
