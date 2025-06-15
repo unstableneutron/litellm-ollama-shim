@@ -6,13 +6,14 @@ import datetime as _dt
 import json
 import os
 import uuid
-from typing import Any, AsyncGenerator
-
-from fastapi import APIRouter, FastAPI, Request
-from fastapi.responses import JSONResponse, StreamingResponse
+from collections.abc import AsyncGenerator
+from typing import Any
 
 import litellm
+from fastapi import APIRouter, FastAPI, Request
+from fastapi.responses import JSONResponse, StreamingResponse
 from litellm.proxy.proxy_server import app as _proxy_app
+
 from .types import (
     ChatRequest,
     ChatResponse,
@@ -24,7 +25,6 @@ from .types import (
 
 def build_app() -> FastAPI:
     """Return a FastAPI app with added Ollama style endpoints."""
-
     app: FastAPI = _proxy_app
     router = APIRouter()
 
@@ -61,9 +61,12 @@ def build_app() -> FastAPI:
             )
             async for chunk in gen:
                 content = chunk["choices"][0].get("delta", {}).get("content", "")
-                payload = {"message": {"role": "assistant", "content": content}, "done": False}
+                payload = {
+                    "message": {"role": "assistant", "content": content},
+                    "done": False,
+                }
                 yield f"data: {json.dumps(payload)}\n\n"
-            yield "data: {\"done\": true}\n\n"
+            yield 'data: {"done": true}\n\n'
 
         if stream:
             return StreamingResponse(litestream(), media_type="text/event-stream")
@@ -73,7 +76,9 @@ def build_app() -> FastAPI:
             messages=[m.model_dump() for m in body.messages],
         )
         content = completion["choices"][0]["message"]["content"]
-        return ChatResponse(message=ChatResponseMessage(role="assistant", content=content))
+        return ChatResponse(
+            message=ChatResponseMessage(role="assistant", content=content)
+        )
 
     @router.get("/api/show")
     async def show(name: str) -> Any:
@@ -88,11 +93,11 @@ def build_app() -> FastAPI:
 
 
 def main() -> None:  # pragma: no cover - entry point
+    """Run the ASGI application via Uvicorn."""
     import uvicorn
 
     uvicorn.run(
         build_app(),
-        host="0.0.0.0",
+        host="0.0.0.0",  # noqa: S104
         port=int(os.environ.get("PORT", "4000")),
     )
-
