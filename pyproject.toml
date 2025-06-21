@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "litellm>=1.72.4",
+    "litellm[proxy]>=1.72.4",
     "fastapi>=0.111.0",
 ]
 
@@ -45,7 +45,11 @@ select = [
 ]
 
 # Treat line length as a formatter concern
-ignore = ["E501"]
+ignore = [
+  "E501",    # Line too long (handled by formatter)
+  "D203",    # 1 blank line required before class docstring (conflicts with D211)
+  "D213",    # Multi-line docstring summary should start at the second line (conflicts with D212)
+]
 
 # Silence deliberate re-exports
 [tool.ruff.lint.per-file-ignores]
