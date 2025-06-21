@@ -36,7 +36,7 @@ def build_app() -> FastAPI:
                 Tag(
                     name=getattr(m, "display_name", None) or getattr(m, "id", ""),
                     model=getattr(m, "id", ""),
-                    modified_at=_dt.datetime.utcnow(),
+                    modified_at=_dt.datetime.now(_dt.UTC),
                     size=1,
                     digest=uuid.uuid4().hex,
                     details={
