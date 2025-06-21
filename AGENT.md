@@ -5,10 +5,10 @@ Quick reference for coding assistants working in this repository.
 ## Build/Lint/Test Commands
 
 - **Install dependencies:** `uv sync`
-- **Run all tests:** `uvx pytest`
-- **Run single test:** `uvx pytest tests/test_translations.py::test_function_name`
-- **Lint & format:** `uvx ruff check --fix && uvx ruff format`
-- **Run application:** `uvx litellm-ollama-shim` (starts on port 4000)
+- **Run all tests:** `uv run pytest`
+- **Run single test:** `uv run pytest tests/test_translations.py::test_function_name`
+- **Lint & format:** `uv run ruff check --fix && uv run ruff format`
+- **Run application:** `uv run litellm-ollama-shim` (starts on port 4000)
 
 ## Architecture & Structure
 
